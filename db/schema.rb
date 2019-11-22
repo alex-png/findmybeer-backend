@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_21_000450) do
+ActiveRecord::Schema.define(version: 2019_11_20_224029) do
 
   create_table "beers", force: :cascade do |t|
     t.string "name"
@@ -21,7 +21,6 @@ ActiveRecord::Schema.define(version: 2019_11_21_000450) do
     t.integer "brewery_id"
     t.integer "style_id"
     t.string "img_url"
-    t.integer "ibu"
     t.index ["brewery_id"], name: "index_beers_on_brewery_id"
     t.index ["style_id"], name: "index_beers_on_style_id"
   end
