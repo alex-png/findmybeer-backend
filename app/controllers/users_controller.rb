@@ -1,10 +1,15 @@
 class UsersController < ApplicationController
 
     def show
-        id = params[:id]
-        if id == true
+        
+        name = params[:user]
+        data = {id: User.all.find_by(name: name).id, name: name, status: 200 }
+        if User.all.find_by(name: name)
+            render json: data
         else
+            render json: data.errors
         end
+        
 
     end
 
