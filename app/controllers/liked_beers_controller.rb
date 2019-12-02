@@ -1,7 +1,7 @@
 class LikedBeersController < ApplicationController
 
     def initial_create
-        user = User.all.find(params[:user_id])
+        user = User.find(params[:user_id])
         data = params[:data]
 
         recc_beers = []
@@ -28,12 +28,34 @@ class LikedBeersController < ApplicationController
             end
         end
         recc_beers = recc_beers.shuffle
+        send_recc_beers(recc_beers)
         
-        render json: recc_beers, include: [:style, :brewery]
     end
 
     def create
+        byebug
+
+
         register_liked_beer()
+    end
+
+
+    def create_recc_beers
+        user = User.find(params[:user_id])
+        if user.liked_beers.size >= 3
+            recc_beers = []
+            first = user.liked_beers[-1].style.beers
+            second = user.liked_beers[-2].style.beers
+            third = user.liked_beers[-3].style.beers
+            first.each{|b| recc_beers << b}
+            second.each{|b| recc_beers << b}
+            third.each{|b| recc_beers << b}
+            send_recc_beers(recc_beers)
+        else
+            recc_beers = []
+            send_recc_beers(recc_beers)
+        end
+        
     end
 
     private
@@ -45,6 +67,14 @@ class LikedBeersController < ApplicationController
     def register_liked_beer(obj)
     liked_beer = LikedBeer.new(user_id: params[:user_id], beer_id: obj )
     liked_beer.save
+    
     end
+     
+    ##Will be called only after initial 
+    def send_recc_beers(recc_beers)
+        render json: recc_beers, include: [:style, :brewery]
+
+    end
+
 
 end ##end of class
