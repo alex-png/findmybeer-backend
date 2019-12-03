@@ -27,35 +27,45 @@ class LikedBeersController < ApplicationController
                 recc_beers << (witch = Beer.find(8))
             end
         end
-        recc_beers = recc_beers.shuffle
         send_recc_beers(recc_beers)
         
     end
 
     def create
-        byebug
+        user = User.find(params[:user_id])
+        
+        register_liked_beer
+        if user.beers.size % 3 == 0
+            create_recc_beers
+        else
+            error = "DOES NOT MODULO 3"
+            render json: error
+        end
 
 
-        register_liked_beer()
     end
 
 
     def create_recc_beers
-        user = User.find(params[:user_id])
-        if user.liked_beers.size >= 3
-            recc_beers = []
-            first = user.liked_beers[-1].style.beers
-            second = user.liked_beers[-2].style.beers
-            third = user.liked_beers[-3].style.beers
-            first.each{|b| recc_beers << b}
-            second.each{|b| recc_beers << b}
-            third.each{|b| recc_beers << b}
-            send_recc_beers(recc_beers)
-        else
-            recc_beers = []
-            send_recc_beers(recc_beers)
-        end
-        
+    
+    user = User.find(params[:user_id])
+
+    recc_beers = []
+
+    ##setting variables for the last three beers. easier to read/use
+    last = user.beers[-1]
+    second = user.beers[-2]
+    third = user.beers[-3]
+    ##getting first 10 beers that are most similar in description to last three beers
+    last_similar = Beer.all.sort_by{ |b| -(b.name.similar(last.name)) }[1..10]
+    second_similar = Beer.all.sort_by{ |b| -(b.name.similar(second.name)) }[1..10]
+    third_similar = Beer.all.sort_by{ |b| -(b.name.similar(third.name)) }[1..10]
+    ##pushing each object of beer into recc beers
+    last_similar.each { |b| recc_beers << b }
+    second_similar.each { |b| recc_beers << b }
+    third_similar.each { |b| recc_beers << b }
+
+    send_recc_beers(recc_beers)
     end
 
     private
@@ -64,14 +74,15 @@ class LikedBeersController < ApplicationController
         return arr
     end
 
-    def register_liked_beer(obj)
-    liked_beer = LikedBeer.new(user_id: params[:user_id], beer_id: obj )
+    def register_liked_beer
+    liked_beer = LikedBeer.new(user_id: params[:user_id], beer_id: params[:beer_id] )
     liked_beer.save
-    
     end
      
     ##Will be called only after initial 
     def send_recc_beers(recc_beers)
+        recc_beers = recc_beers.uniq
+        recc_beers = recc_beers.shuffle
         render json: recc_beers, include: [:style, :brewery]
 
     end
