@@ -9,26 +9,38 @@ class LikedBeersController < ApplicationController
         data.each do |pref| 
             if pref.to_i == 1
                 marg = get_beers(" lime")
-                marg.each{|b| recc_beers << b}
+                marg = marg.shuffle
+                marg[0..1].each{|b| recc_beers << b}
             elsif pref.to_i == 2
                 coffee = get_beers("coffee")
-                coffee.each{|b| recc_beers << b}
+                coffee = coffee.shuffle
+                coffee[0..1].each{|b| recc_beers << b}
             elsif pref.to_i == 3
                 olfash = get_beers("smoke")
-                olfash.each{|b| recc_beers << b}
+                olfash = olfash.shuffle
+                olfash[0..1].each{|b| recc_beers << b}
+
                 whisk = get_beers("whiskey")
-                whisk.each{|b| recc_beers << b}
+                whisk = whisk.shuffle
+
+                whisk[0..1].each{|b| recc_beers << b}
+
             elsif pref.to_i == 4 
                 choc = get_beers("chocholate")
-                choc.each{|b| recc_beers << b}
+                choc = choc.shuffle
+
+                choc[0..1].each{|b| recc_beers << b}
             elsif pref.to_i == 5
                 coc = get_beers("coconut")
-                coc.each{|b| recc_beers << b}
+                coc = coc.shuffle
+
+                coc[0..1].each{|b| recc_beers << b}
             elsif pref.to_i == 6
                 recc_beers << (butter = Beer.find(297))
                 recc_beers << (witch = Beer.find(8))
             end
         end
+        rec_beers = recc_beers.shuffle
         send_recc_beers(recc_beers)
         
     end
@@ -63,14 +75,14 @@ class LikedBeersController < ApplicationController
             sec_num = num + 3
 
             last_similar = Beer.all.sort_by{ |b| -(b.name.similar(last.name)) }
-            last_similar = last_similar.select{|b| !user.beers.include?(b) }[num..sec_num]
+            last_similar = last_similar.select{|b| user.beers.include?(b) == false && user.disliked_beers.include?( user.disliked_beers.find_by(beer_id: b.id)   ) == false }[1..2]
 
             second_similar = Beer.all.sort_by{ |b| -(b.name.similar(second.name)) }
-            second_similar = second_similar.select{|b| !user.beers.include?(b) }[num..sec_num]
+            second_similar = second_similar.select{|b| user.beers.include?(b) == false && user.disliked_beers.include?( user.disliked_beers.find_by(beer_id: b.id)    ) == false }[1..2]
 
 
             third_similar = Beer.all.sort_by{ |b| -(b.name.similar(third.name)) }
-            third_similar = third_similar.select{|b| !user.beers.include?(b) }[num..sec_num]
+            third_similar = third_similar.select{|b| user.beers.include?(b) == false && user.disliked_beers.include?( user.disliked_beers.find_by(beer_id: b.id)    ) == false }[1..2]
             ##pushing each object of beer into recc beers
             
             last_similar.each{|b| recc_beers << b}
@@ -86,7 +98,7 @@ class LikedBeersController < ApplicationController
             last_similar = Beer.all.sort_by{ |b| -(b.name.similar(last.name)) }
             "JUST BEER"
             
-            last_similar = last_similar.select{|b| !user.beers.include?(b) }[num..sec_num]
+            last_similar = last_similar.select{|b| user.beers.include?(b) == false && user.disliked_beers.include?(user.disliked_beers.find_by(beer_id: b.id)) == false }[1..2]
             "sorted beer / user not inculded"
             last_similar.each{|b| recc_beers << b}
 

@@ -5,4 +5,7 @@ class Beer < ApplicationRecord
     has_many :reviews
     has_many :liked_beers
     has_many :users, through: :liked_beer
+
+    has_many :disliked_beers
+
 end

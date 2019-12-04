@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
+  resources :disliked_beers
     resources :reviews
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
+  post "dislikedbeer", to: 'disliked_beers#create'
   post "reviews", to: 'reviews#create'
   get "users/:user", to: 'users#show'
 
