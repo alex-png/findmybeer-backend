@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_20_224029) do
+ActiveRecord::Schema.define(version: 2019_12_04_165437) do
 
   create_table "beers", force: :cascade do |t|
     t.string "name"
@@ -30,6 +30,25 @@ ActiveRecord::Schema.define(version: 2019_11_20_224029) do
     t.string "description"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "liked_beers", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "beer_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["beer_id"], name: "index_liked_beers_on_beer_id"
+    t.index ["user_id"], name: "index_liked_beers_on_user_id"
+  end
+
+  create_table "reviews", force: :cascade do |t|
+    t.string "body"
+    t.integer "user_id"
+    t.integer "beer_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["beer_id"], name: "index_reviews_on_beer_id"
+    t.index ["user_id"], name: "index_reviews_on_user_id"
   end
 
   create_table "styles", force: :cascade do |t|

@@ -16,6 +16,8 @@ class LikedBeersController < ApplicationController
             elsif pref.to_i == 3
                 olfash = get_beers("smoke")
                 olfash.each{|b| recc_beers << b}
+                whisk = get_beers("whiskey")
+                whisk.each{|b| recc_beers << b}
             elsif pref.to_i == 4 
                 choc = get_beers("chocholate")
                 choc.each{|b| recc_beers << b}
@@ -35,38 +37,64 @@ class LikedBeersController < ApplicationController
         user = User.find(params[:user_id])
         
         register_liked_beer
-        if user.beers.size % 3 == 0
-            create_recc_beers
-        else
-            error = "DOES NOT MODULO 3"
-            render json: error
-        end
+        
+        create_recc_beers
 
 
-    end
+    end ##
+
+
 
 
     def create_recc_beers
     
-    user = User.find(params[:user_id])
+        user = User.find(params[:user_id])
 
-    recc_beers = []
+        recc_beers = []
+        if user.beers.size == 0 
+            recc_beers << "nothing..."
+        elsif user.beers.size % 3 == 0 && user.beers.size != 0
+             ##setting variables for the last three beers. easier to read/use
+            last = user.beers[-1]
+            second = user.beers[-2]
+            third = user.beers[-3]
+            ##getting first 10 beers that are most similar in description to last three beers
+            num = rand(10)
+            sec_num = num + 3
 
-    ##setting variables for the last three beers. easier to read/use
-    last = user.beers[-1]
-    second = user.beers[-2]
-    third = user.beers[-3]
-    ##getting first 10 beers that are most similar in description to last three beers
-    last_similar = Beer.all.sort_by{ |b| -(b.name.similar(last.name)) }[1..10]
-    second_similar = Beer.all.sort_by{ |b| -(b.name.similar(second.name)) }[1..10]
-    third_similar = Beer.all.sort_by{ |b| -(b.name.similar(third.name)) }[1..10]
-    ##pushing each object of beer into recc beers
-    last_similar.each { |b| recc_beers << b }
-    second_similar.each { |b| recc_beers << b }
-    third_similar.each { |b| recc_beers << b }
+            last_similar = Beer.all.sort_by{ |b| -(b.name.similar(last.name)) }
+            last_similar = last_similar.select{|b| !user.beers.include?(b) }[num..sec_num]
 
-    send_recc_beers(recc_beers)
-    end
+            second_similar = Beer.all.sort_by{ |b| -(b.name.similar(second.name)) }
+            second_similar = second_similar.select{|b| !user.beers.include?(b) }[num..sec_num]
+
+
+            third_similar = Beer.all.sort_by{ |b| -(b.name.similar(third.name)) }
+            third_similar = third_similar.select{|b| !user.beers.include?(b) }[num..sec_num]
+            ##pushing each object of beer into recc beers
+            
+            last_similar.each{|b| recc_beers << b}
+
+            second_similar.each{|b| recc_beers << b}
+
+            third_similar.each{|b| recc_beers << b}
+        else
+            num = rand(10)
+            sec_num = num + 3
+
+            last = user.beers[-1]
+            last_similar = Beer.all.sort_by{ |b| -(b.name.similar(last.name)) }
+            "JUST BEER"
+            
+            last_similar = last_similar.select{|b| !user.beers.include?(b) }[num..sec_num]
+            "sorted beer / user not inculded"
+            last_similar.each{|b| recc_beers << b}
+
+        
+        end
+        ##then..
+        send_recc_beers(recc_beers)
+    end ##
 
     private
     def get_beers(noun)
@@ -83,7 +111,7 @@ class LikedBeersController < ApplicationController
     def send_recc_beers(recc_beers)
         recc_beers = recc_beers.uniq
         recc_beers = recc_beers.shuffle
-        render json: recc_beers, include: [:style, :brewery]
+        render json: recc_beers, include: [:style, :brewery, :reviews]
 
     end
 
