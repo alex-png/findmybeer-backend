@@ -2,11 +2,14 @@ class UsersController < ApplicationController
 
     def show
         
-        name = params[:user]
-        data = {id: User.all.find_by(name: name).id, name: name, status: 200 }
-        if User.all.find_by(name: name)
-            render json: data
+        # name = params[:user]
+        # user = 
+        # data = {id: User.all.find_by(name: name).id, name: name, status: 200 }
+        if User.find_by(name: params[:user])
+            data = User.find_by(name: params[:user])
+            render json: data, include: [:liked_beers, :reviews]
         else
+            data = User.find_by(name: params[:user])
             render json: data.errors
         end
         

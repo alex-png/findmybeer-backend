@@ -4,6 +4,7 @@ class User < ApplicationRecord
 
     has_many :reviews
     has_many :liked_beers
+    
     has_many :beers, through: :liked_beers
     has_many :disliked_beers
 
