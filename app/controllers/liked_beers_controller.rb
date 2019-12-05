@@ -96,35 +96,41 @@ class LikedBeersController < ApplicationController
             num = rand(10)
             sec_num = num + 3
 
-            last_similar = Beer.all.sort_by{ |b| -(b.name.similar(last.name)) }
-            last_similar = last_similar.select{|b| user.beers.include?(b) == false && user.disliked_beers.include?( user.disliked_beers.find_by(beer_id: b.id)   ) == false }[1..2]
+            last_similar = ((Beer.all.sort_by{ |b| -(b.name.similar(last.name)) }).select{|b| user.beers.include?(b) == false && user.disliked_beers.include?( user.disliked_beers.find_by(beer_id: b.id)   ) == false })[1]
 
-            second_similar = Beer.all.sort_by{ |b| -(b.name.similar(second.name)) }
-            second_similar = second_similar.select{|b| user.beers.include?(b) == false && user.disliked_beers.include?( user.disliked_beers.find_by(beer_id: b.id)    ) == false }[1..2]
+            last_style = ((last.style.beers).select{|b| user.beers.include?(b) == false && user.disliked_beers.include?( user.disliked_beers.find_by(beer_id: b.id)   ) == false })[1]
 
+            second_similar = ((Beer.all.sort_by{ |b| -(b.name.similar(second.name)) }).select{|b| user.beers.include?(b) == false && user.disliked_beers.include?( user.disliked_beers.find_by(beer_id: b.id)   ) == false })[1]
 
-            third_similar = Beer.all.sort_by{ |b| -(b.name.similar(third.name)) }
-            third_similar = third_similar.select{|b| user.beers.include?(b) == false && user.disliked_beers.include?( user.disliked_beers.find_by(beer_id: b.id)    ) == false }[1..2]
+            second_style = ((second.style.beers).select{|b| user.beers.include?(b) == false && user.disliked_beers.include?( user.disliked_beers.find_by(beer_id: b.id)   ) == false })[1]
+
+            third_similar = ((Beer.all.sort_by{ |b| -(b.name.similar(third.name)) }).select{|b| user.beers.include?(b) == false && user.disliked_beers.include?( user.disliked_beers.find_by(beer_id: b.id)   ) == false })[1]
+
+            third_style = ((third.style.beers).select{|b| user.beers.include?(b) == false && user.disliked_beers.include?( user.disliked_beers.find_by(beer_id: b.id)   ) == false })[1]
+
+            
+            
             ##pushing each object of beer into recc beers
             
-            last_similar.each{|b| recc_beers << b}
+            recc_beers << last_similar
+            recc_beers << last_style
 
-            second_similar.each{|b| recc_beers << b}
+            recc_beers << second_similar
+            recc_beers << second_style
 
-            third_similar.each{|b| recc_beers << b}
+            recc_beers << third_similar
+            recc_beers << third_style
+
         else
-            num = rand(10)
-            sec_num = num + 3
-
             last = user.beers[-1]
-            last_similar = Beer.all.sort_by{ |b| -(b.name.similar(last.name)) }
-            "JUST BEER"
             
-            last_similar = last_similar.select{|b| user.beers.include?(b) == false && user.disliked_beers.include?(user.disliked_beers.find_by(beer_id: b.id)) == false }[1..2]
-            "sorted beer / user not inculded"
-            last_similar.each{|b| recc_beers << b}
+            last_similar = ((Beer.all.sort_by{ |b| -(b.name.similar(last.name)) }).select{|b| user.beers.include?(b) == false && user.disliked_beers.include?( user.disliked_beers.find_by(beer_id: b.id)   ) == false })[1]
 
-        
+            last_style = ((last.style.beers).select{|b| user.beers.include?(b) == false && user.disliked_beers.include?( user.disliked_beers.find_by(beer_id: b.id)   ) == false })[1]
+
+            recc_beers << last_similar
+            recc_beers << last_style
+
         end
         ##then..
         send_recc_beers(recc_beers)
