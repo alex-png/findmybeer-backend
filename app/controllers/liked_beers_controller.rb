@@ -34,16 +34,38 @@ class LikedBeersController < ApplicationController
                 coc = get_beers("coconut")
                 coc = coc.shuffle
 
+                pineapp = get_beers("pineapple")
+                pineapp = pineapp.shuffle
+
+
                 coc[0..1].each{|b| recc_beers << b}
+                pineapp[0..1].each{|b| recc_beers << b}
             elsif pref.to_i == 6
                 recc_beers << (butter = Beer.find(297))
                 recc_beers << (witch = Beer.find(8))
-            end
-        end
+            elsif pref.to_i == 7
+                wine = get_beers("wine")
+                wine = wine.shuffle
+                wine[0..1].each{|b| recc_beers << b}
+            elsif pref.to_i == 8
+                berry = get_beers("erries")
+                berry = berry.shuffle
+
+                berry[0..1].each{|b| recc_beers << b}                
+            elsif pref.to_i == 9
+                orange = get_beers("orange")
+                orange = orange.shuffle
+
+                orange[0..1].each{|b| recc_beers << b}            
+            end ## end of if
+            
+        end ## end of each
+
+
         rec_beers = recc_beers.shuffle
         send_recc_beers(recc_beers)
         
-    end
+    end  ##end of meth
 
     def create
         user = User.find(params[:user_id])
