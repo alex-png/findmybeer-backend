@@ -7,7 +7,8 @@ class UsersController < ApplicationController
         # data = {id: User.all.find_by(name: name).id, name: name, status: 200 }
         if User.find_by(name: params[:user])
             data = User.find_by(name: params[:user])
-            render json: data, include: [:liked_beers, :reviews]
+            
+            render json: data
         else
             data = User.find_by(name: params[:user])
             render json: data.errors
