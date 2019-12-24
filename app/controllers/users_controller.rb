@@ -17,6 +17,17 @@ class UsersController < ApplicationController
 
     end
 
+    def beers
+        if User.find_by(name: params[:user])
+            user = User.find_by(name: params[:user])
+            data = user.liked_beers
+            
+            render json: data
+        else
+            data = User.find_by(name: params[:user])
+            render json: data.errors
+        end
+ end
    
 
 
