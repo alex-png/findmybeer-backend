@@ -5,7 +5,7 @@ Rails.application.routes.draw do
   post "dislikedbeer", to: 'disliked_beers#create'
   post "reviews", to: 'reviews#create'
   get "users/:user", to: 'users#show'
-  get "/:user/beers", to: 'users#beers'
+  get "/:id/beers", to: 'users#beers'
 
   post 'users', to: 'users#create'
 
