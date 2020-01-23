@@ -85,7 +85,7 @@ class LikedBeersController < ApplicationController
         user = User.find(params[:user_id])
 
         recc_beers = []
-        if user.beers.size == 0 
+        if user.liked_beer.size == 0 
             recc_beers << "nothing..."
         elsif user.beers.size % 3 == 0 && user.beers.size != 0
              ##setting variables for the last three beers. easier to read/use
