@@ -130,6 +130,40 @@ class LikedBeersController < ApplicationController
         send_recc_beers(recc_beers)
     end ##
 
+
+    def new_liking
+        user = User.find(params[:user_id])
+        register_liked_beer
+        user.list_of_available_beers = user.list_of_available_beers - user.liked_beers
+        ##then user.list of available beers calls on create reccomnation, create recs uses list of beers instead of comparing between liked and disliked.
+
+    end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     private
     def get_beers(noun)
         arr = Beer.all.select{ |b| b.description.downcase.include?("#{noun}")  }
